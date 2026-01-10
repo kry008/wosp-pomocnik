@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: black;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-info p {
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+        
+        .back-btn {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            background: #5568d3;
+        }
+        
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+            margin-bottom: 2rem;
+        }
+        
+        .content h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group input[readonly] {
+            background: #f8f9fa;
+            cursor: not-allowed;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+        
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #ff3c3c;
+        }
+        
+        .btn-secondary {
+            background: #666;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #555;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-info {
+                text-align: center;
+                margin-top: 1rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center;">
+            <img src="/logo.png" alt="Logo WOŚP" style="height: 50px; margin-right: 10px;">
+            <h1 style="margin: 0;"><a href="/" style="text-decoration: none; color: inherit;"><%= title %></a></h1>
+            <p style="margin: 0 0 0 10px;">Edycja wolontariusza</p>
+        </div>
+        <div class="user-info">
+            <p><strong>Zalogowany:</strong> <%= user.imie %> <%= user.nazwisko %></p>
+            <a href="/wolontariusze/lista" class="back-btn">← Powrót do listy</a>
+        </div>
+    </div>
+    
+    <div class="content">
+        <h3>Edytuj dane wolontariusza #<%= wolontariusz.numerID %></h3>
+        
+        <form method="POST" action="/wolontariusze/edytuj/<%= wolontariusz.id %>">
+            <div class="form-group">
+                <label for="numerID">Numer ID</label>
+                <input type="text" id="numerID" name="numerID" value="<%= wolontariusz.numerID %>" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="imie">Imię *</label>
+                <input type="text" id="imie" name="imie" value="<%= wolontariusz.imie %>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="nazwisko">Nazwisko *</label>
+                <input type="text" id="nazwisko" name="nazwisko" value="<%= wolontariusz.nazwisko %>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="discord">Discord</label>
+                <input type="text" id="discord" name="discord" value="<%= wolontariusz.discord || '' %>" placeholder="np. username#1234">
+            </div>
+            
+            <div class="form-group">
+                <label for="telefon">Telefon</label>
+                <input type="tel" id="telefon" name="telefon" value="<%= wolontariusz.telefon || '' %>" placeholder="np. 123456789">
+            </div>
+            
+            <div class="form-group">
+                <label for="pesel">PESEL</label>
+                <input type="text" id="pesel" name="pesel" value="<%= wolontariusz.pesel || '' %>" maxlength="11">
+            </div>
+            
+            <div class="form-group">
+                <label for="rodzic">Rodzic/Opiekun</label>
+                <input type="text" id="rodzic" name="rodzic" value="<%= wolontariusz.rodzic === 'BRAK' ? '' : wolontariusz.rodzic %>" placeholder="Pozostaw puste jeśli nie dotyczy">
+            </div>
+            
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terminal" name="terminal" value="1" <%= wolontariusz.terminal == 1 ? 'checked' : '' %>>
+                    <label for="terminal">Posiada terminal</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="puszkaWydana" name="puszkaWydana" value="1" <%= wolontariusz.puszkaWydana == 1 ? 'checked' : '' %>>
+                    <label for="puszkaWydana">Puszka wydana</label>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">💾 Zapisz zmiany</button>
+                <a href="/wolontariusze/lista" class="btn btn-secondary">❌ Anuluj</a>
+                <% if (user.dostep === 0) { %>
+                <button type="button" class="btn btn-danger" onclick="deleteVolunteer()">🗑️ Usuń wolontariusza</button>
+                <% } %>
+            </div>
+        </form>
+    </div>
+    
+    <div class="footer">
+        <p><%= footer_text %></p>
+    </div>
+    
+    <script>
+        function deleteVolunteer() {
+            if (confirm('Czy na pewno chcesz usunąć tego wolontariusza? Ta operacja jest nieodwracalna!')) {
+                fetch('/wolontariusze/usun/<%= wolontariusz.id %>', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Wolontariusz został usunięty');
+                        window.location.href = '/wolontariusze/lista';
+                    } else {
+                        alert('Błąd: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Wystąpił błąd podczas usuwania');
+                    console.error('Error:', error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

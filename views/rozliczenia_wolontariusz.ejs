@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/datatables/dataTables.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: black;
+            min-height: 100vh;
+            padding: 20px
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px
+        }
+
+        .back-btn {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px
+        }
+
+        textarea {
+            min-height: 80px
+        }
+
+        .tagger {
+            border: 1px solid #ccc;
+            padding: 6px;
+            border-radius: 4px;
+            min-height: 44px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .tag {
+            background: #eef;
+            padding: 6px 8px;
+            border-radius: 20px;
+            display: inline-flex;
+            gap: 6px;
+            align-items: center
+        }
+
+        .tag button {
+            border: none;
+            background: transparent;
+            cursor: pointer
+        }
+
+        .suggestions {
+            position: relative
+        }
+
+        .suggestions-list {
+            position: absolute;
+            z-index: 50;
+            background: white;
+            border: 1px solid #ddd;
+            width: 100%;
+            max-height: 200px;
+            overflow: auto
+        }
+
+        .suggestion {
+            padding: 8px;
+            cursor: pointer
+        }
+
+        .suggestion:hover {
+            background: #f0f0f0
+        }
+
+        .submit-btn {
+            background: #2d9cdb;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer
+        }
+
+        .terminal-amount {
+            display: none;
+        }
+
+        /* Custom checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-container input {
+            display: none;
+        }
+
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            background: #ccc;
+            border-radius: 4px;
+            margin-right: 8px;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .checkbox-container input:checked + .checkmark {
+            background: #667eea;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 6px;
+            top: 2px;
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .checkbox-container input:checked + .checkmark:after {
+            display: block;
+        }
+
+        /* Input group for +/- buttons */
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group input {
+            flex: 1;
+            text-align: center;
+            margin: 0 5px;
+        }
+
+        .btn-plus, .btn-minus {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            touch-action: manipulation;
+        }
+
+        .btn-plus:hover, .btn-minus:hover {
+            background: #5568d3;
+        }
+
+        .value-display {
+            display: block;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            margin-top: 4px;
+        }
+
+        .summary {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .summary p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        @media (max-width:700px) {
+            .form-row {
+                flex-direction: column
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div>
+            <h1>
+                <%= title %>
+            </h1>
+            <p>Rozlicz wolontariusza</p>
+        </div>
+        <div>
+            <p><strong>Zalogowany:</strong>
+                <%= user.imie %>
+                    <%= user.nazwisko %>
+            </p>
+            <a href="/rozliczenia/listawolontariuszy" class="back-btn">← Wróć</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <h3>
+            <%= wolontariusz.imie %>
+                <%= wolontariusz.nazwisko %> — <strong>
+                        <%= wolontariusz.numerID %>
+                    </strong>
+        </h3>
+
+        <form method="post" action="/rozliczenia/wolontariusz/<%= wolontariusz.id %>">
+
+            <h4>Bilans monetarny</h4>
+            <div class="form-row">
+                <div class="form-group"><label>1gr</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="m1gr">-</button>
+                        <input type="number" name="m1gr" value="0" tabindex="1">
+                        <button type="button" class="btn-plus" data-field="m1gr">+</button>
+                    </div>
+                    <span class="value-display" id="val-m1gr">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>2gr</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="m2gr">-</button>
+                        <input type="number" name="m2gr" value="0" tabindex="2">
+                        <button type="button" class="btn-plus" data-field="m2gr">+</button>
+                    </div>
+                    <span class="value-display" id="val-m2gr">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>5gr</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="m5gr">-</button>
+                        <input type="number" name="m5gr" value="0" tabindex="3">
+                        <button type="button" class="btn-plus" data-field="m5gr">+</button>
+                    </div>
+                    <span class="value-display" id="val-m5gr">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>10gr</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="m10gr">-</button>
+                        <input type="number" name="m10gr" value="0" tabindex="4">
+                        <button type="button" class="btn-plus" data-field="m10gr">+</button>
+                    </div>
+                    <span class="value-display" id="val-m10gr">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>20gr</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="m20gr">-</button>
+                        <input type="number" name="m20gr" value="0" tabindex="5">
+                        <button type="button" class="btn-plus" data-field="m20gr">+</button>
+                    </div>
+                    <span class="value-display" id="val-m20gr">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>50gr</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="m50gr">-</button>
+                        <input type="number" name="m50gr" value="0" tabindex="6">
+                        <button type="button" class="btn-plus" data-field="m50gr">+</button>
+                    </div>
+                    <span class="value-display" id="val-m50gr">0.00 zł</span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>1zł</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="m1zl">-</button>
+                        <input type="number" name="m1zl" value="0" tabindex="7">
+                        <button type="button" class="btn-plus" data-field="m1zl">+</button>
+                    </div>
+                    <span class="value-display" id="val-m1zl">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>2zł</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="m2zl">-</button>
+                        <input type="number" name="m2zl" value="0" tabindex="8">
+                        <button type="button" class="btn-plus" data-field="m2zl">+</button>
+                    </div>
+                    <span class="value-display" id="val-m2zl">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>5zł</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="m5zl">-</button>
+                        <input type="number" name="m5zl" value="0" tabindex="9">
+                        <button type="button" class="btn-plus" data-field="m5zl">+</button>
+                    </div>
+                    <span class="value-display" id="val-m5zl">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>10zł</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="b10zl">-</button>
+                        <input type="number" name="b10zl" value="0" tabindex="10">
+                        <button type="button" class="btn-plus" data-field="b10zl">+</button>
+                    </div>
+                    <span class="value-display" id="val-b10zl">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>20zł</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="b20zl">-</button>
+                        <input type="number" name="b20zl" value="0" tabindex="11">
+                        <button type="button" class="btn-plus" data-field="b20zl">+</button>
+                    </div>
+                    <span class="value-display" id="val-b20zl">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>50zł</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="b50zl">-</button>
+                        <input type="number" name="b50zl" value="0" tabindex="12">
+                        <button type="button" class="btn-plus" data-field="b50zl">+</button>
+                    </div>
+                    <span class="value-display" id="val-b50zl">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>100zł</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="b100zl">-</button>
+                        <input type="number" name="b100zl" value="0" tabindex="13">
+                        <button type="button" class="btn-plus" data-field="b100zl">+</button>
+                    </div>
+                    <span class="value-display" id="val-b100zl">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>200zł</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="b200zl">-</button>
+                        <input type="number" name="b200zl" value="0" tabindex="14">
+                        <button type="button" class="btn-plus" data-field="b200zl">+</button>
+                    </div>
+                    <span class="value-display" id="val-b200zl">0.00 zł</span>
+                </div>
+                <div class="form-group"><label>500zł</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-minus" data-field="b500zl">-</button>
+                        <input type="number" name="b500zl" value="0" tabindex="15">
+                        <button type="button" class="btn-plus" data-field="b500zl">+</button>
+                    </div>
+                    <span class="value-display" id="val-b500zl">0.00 zł</span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group"><label>Waluta obca</label><textarea
+                        name="walutaObca" tabindex="16"></textarea></div>
+                <div class="form-group"><label>Dary/inne</label><textarea
+                        name="daryInne" tabindex="17"></textarea></div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group" style="flex:1 1 100%"><label>Uwagi liczących</label><textarea
+                        name="uwagiLiczacych" tabindex="18"></textarea></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group" style="flex:1 1 100%"><label>Uwagi wolontariusza</label><textarea
+                        name="uwagiWolontariusza" tabindex="19"></textarea></div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="terminal" id="terminal" tabindex="20">
+                        <span class="checkmark"></span>
+                        Terminal
+                    </label>
+                </div>
+                <div class="form-group terminal-amount">
+                    <label>Kwota z terminala</label>
+                    <input type="number" step="0.01" name="kwotaZTerminala" placeholder="0.00" tabindex="21">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Sala</label>
+                    <input type="text" name="sala" value="GŁÓWNA" tabindex="22">
+                </div>
+            </div>
+
+            <h4>Osoby rozliczające</h4>
+            <p>Wpisujący (zalogowany) zostanie dodany automatycznie. Możesz dodać dodatkowe osoby.</p>
+            <div class="form-row">
+                <div class="form-group" style="flex:1 1 100%">
+                    <div id="tagger" class="tagger"></div>
+                    <div class="suggestions">
+                        <input id="tagInput" type="text" placeholder="Wyszukaj i naciśnij Enter"
+                            style="width:100%; margin-top:6px; padding:8px;" tabindex="23" />
+                        <div id="suggestionsList" class="suggestions-list" style="display:none"></div>
+                    </div>
+                    <input type="hidden" name="kto_ids" id="kto_ids">
+                </div>
+            </div>
+
+            <div class="summary">
+                <p>Suma zebrana: <span id="suma-zebrana">0.00</span> zł</p>
+                <p>Suma z terminala: <span id="suma-terminal">0.00</span> zł</p>
+                <p>Suma całkowita: <span id="suma-calkowita">0.00</span> zł</p>
+            </div>
+
+            <div style="margin-top:12px">
+                <button type="submit" class="submit-btn" tabindex="24">Zapisz rozliczenie</button>
+            </div>
+        </form>
+    </div>
+
+    <div style="height:20px"></div>
+
+    <script>
+        let usersCache = null
+        let selected = []
+        const tagger = document.getElementById('tagger')
+        const tagInput = document.getElementById('tagInput')
+        const suggestionsList = document.getElementById('suggestionsList')
+        const kto_ids = document.getElementById('kto_ids')
+
+        // Dodaj automatycznie wpisującego (zalogowanego)
+        const loggedInId = <%= user.id %>
+        const loggedInName = "<%= user.imie %> <%= user.nazwisko %>"
+        selected.push({ id: loggedInId, name: loggedInName })
+        renderTags()
+
+        tagInput.addEventListener('input', async (e) => {
+            const q = e.target.value.trim().toLowerCase()
+            if (!usersCache) {
+                const res = await fetch('/helper/uzytkownicy/spis')
+                const data = await res.json()
+                if (data.success) usersCache = data.users
+                else usersCache = []
+            }
+            if (!q) { suggestionsList.style.display = 'none'; suggestionsList.innerHTML = ''; return }
+            const filtered = usersCache.filter(u => (u.imie + ' ' + u.nazwisko).toLowerCase().includes(q) || (u.nazwisko + ' ' + u.imie).toLowerCase().includes(q)).slice(0, 20)
+            suggestionsList.innerHTML = ''
+            filtered.forEach(u => {
+                const div = document.createElement('div')
+                div.className = 'suggestion'
+                div.textContent = u.imie + ' ' + u.nazwisko
+                div.onclick = () => { addTag(u.id, u.imie + ' ' + u.nazwisko); tagInput.value = ''; suggestionsList.style.display = 'none' }
+                suggestionsList.appendChild(div)
+            })
+            suggestionsList.style.display = filtered.length ? 'block' : 'none'
+        })
+
+        tagInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault()
+                // jeśli pierwszy suggestion istnieje, wybierz go
+                const first = suggestionsList.querySelector('.suggestion')
+                if (first) { first.click(); return }
+                const val = tagInput.value.trim()
+                if (!val) return
+                // nie dodawaj wolontariuszy na podstawie wolnego tekstu
+                tagInput.value = ''
+            }
+        })
+
+        function addTag(id, name) {
+            if (selected.find(s => s.id === id)) return
+            selected.push({ id, name })
+            renderTags()
+        }
+
+        function removeTag(id) {
+            if (id === loggedInId) return // nie usuwaj wpisującego
+            selected = selected.filter(s => s.id !== id)
+            renderTags()
+        }
+
+        function renderTags() {
+            tagger.innerHTML = ''
+            selected.forEach(s => {
+                const span = document.createElement('span')
+                span.className = 'tag'
+                span.textContent = s.name
+                if (s.id !== loggedInId) {
+                    const btn = document.createElement('button')
+                    btn.type = 'button'
+                    btn.textContent = '×'
+                    btn.onclick = () => removeTag(s.id)
+                    span.appendChild(btn)
+                }
+                tagger.appendChild(span)
+            })
+            kto_ids.value = selected.map(s => s.id).join(',')
+        }
+
+        // Toggle kwota z terminala
+        document.getElementById('terminal').addEventListener('change', function() {
+            const amountField = document.querySelector('.terminal-amount');
+            if (this.checked) {
+                amountField.style.display = 'block';
+            } else {
+                amountField.style.display = 'none';
+            }
+        });
+
+        // Currency values
+        const values = {
+            m1gr: 0.01, m2gr: 0.02, m5gr: 0.05, m10gr: 0.10, m20gr: 0.20, m50gr: 0.50,
+            m1zl: 1, m2zl: 2, m5zl: 5, b10zl: 10, b20zl: 20, b50zl: 50, b100zl: 100, b200zl: 200, b500zl: 500
+        };
+
+        function updateValue(field) {
+            const input = document.querySelector(`input[name="${field}"]`);
+            const val = parseInt(input.value) || 0;
+            const display = document.getElementById(`val-${field}`);
+            const amount = val * values[field];
+            display.textContent = amount.toFixed(2) + ' zł';
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let sumaZebrana = 0;
+            for (let field in values) {
+                const val = parseInt(document.querySelector(`input[name="${field}"]`).value) || 0;
+                sumaZebrana += val * values[field];
+            }
+            document.getElementById('suma-zebrana').textContent = sumaZebrana.toFixed(2);
+            const terminalAmount = parseFloat(document.querySelector('input[name="kwotaZTerminala"]').value) || 0;
+            document.getElementById('suma-terminal').textContent = terminalAmount.toFixed(2);
+            const sumaCalkowita = sumaZebrana + terminalAmount;
+            document.getElementById('suma-calkowita').textContent = sumaCalkowita.toFixed(2);
+        }
+
+        // +/- buttons
+        document.querySelectorAll('.btn-plus').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                event.preventDefault();
+                const field = btn.dataset.field;
+                const input = document.querySelector(`input[name="${field}"]`);
+                input.value = (parseInt(input.value) || 0) + 1;
+                updateValue(field);
+            });
+        });
+
+        document.querySelectorAll('.btn-minus').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                event.preventDefault();
+                const field = btn.dataset.field;
+                const input = document.querySelector(`input[name="${field}"]`);
+                const val = (parseInt(input.value) || 0) - 1;
+                input.value = Math.max(0, val);
+                updateValue(field);
+            });
+        });
+
+        // Input changes
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.name in values) {
+                    updateValue(input.name);
+                } else if (input.name === 'kwotaZTerminala') {
+                    calculateTotal();
+                }
+            });
+        });
+
+        // Initial calculation
+        calculateTotal();
+        for (let field in values) {
+            updateValue(field);
+        }
+    </script>
+
+    <% if (hadTerminal) { %>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('terminal').checked = true;
+            document.querySelector('.terminal-amount').style.display = 'block';
+        });
+    </script>
+    <% } %>
+
+</body>
+
+</html>

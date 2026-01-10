@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/datatables/dataTables.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: black; min-height: 100vh; padding: 20px; }
+        .header { background: white; padding: 1rem 2rem; border-radius: 10px; margin-bottom: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap }
+        .header h1 { color:#333; margin-bottom:0.5rem }
+        .user-info { text-align:right }
+        .user-info p { color:#666; margin-bottom:0.25rem }
+        .back-btn { background:#667eea; color:white; padding:0.5rem 1rem; text-decoration:none; border-radius:5px; font-weight:600; transition:background 0.2s; display:inline-block; margin-top:0.5rem }
+        .back-btn:hover { background:#5568d3 }
+        .content { background:white; padding:2rem; border-radius:10px; box-shadow:0 5px 15px rgba(255,255,255,0.3); margin-bottom:2rem }
+        .content h3 { color:#333; margin-bottom:1.5rem; border-bottom:2px solid #667eea; padding-bottom:0.5rem }
+        .table-container { overflow-x:auto }
+        table { width:100%; border-collapse:collapse; margin-top:1rem }
+        table th { background:#667eea; color:white; padding:1rem; text-align:left; font-weight:600 }
+        table td { padding:0.75rem 1rem; border-bottom:1px solid #ddd }
+        table tr:hover { background:#f8f9fa }
+        .no-data { text-align:center; padding:2rem; color:#666; font-style:italic }
+        .footer { text-align:center; color:white; margin-top:2rem; font-size:0.9rem }
+        @media (max-width:768px) { .header { flex-direction:column; text-align:center } .user-info { text-align:center; margin-top:1rem } table { font-size:0.9rem } table th, table td { padding:0.5rem } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center;">
+            <img src="/logo.png" alt="Logo WOŚP" style="height: 50px; margin-right: 10px;">
+            <h1 style="margin: 0;"><a href="/" style="text-decoration: none; color: inherit;"><%= title %></a></h1>
+            <p style="margin: 0 0 0 10px;">Ostatnie operacje (audit_log)</p>
+        </div>
+        <div class="user-info">
+            <p><strong>Zalogowany:</strong> <%= user.imie %> <%= user.nazwisko %></p>
+            <a href="/dashboard" class="back-btn">← Powrót</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <h3>Logi (<%= logs.length %>)</h3>
+        <div class="table-container">
+            <% if (logs.length > 0) { %>
+            <table id="logsTable">
+                <thead>
+                    <tr>
+                        <th>Czas</th>
+                        <th>Tabela</th>
+                        <th>Rekord ID</th>
+                        <th>Operacja</th>
+                        <th>Użytkownik</th>
+                        <th>Szczegóły</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% logs.forEach(function(l) { %>
+                    <tr>
+                        <td><%= l.czasOperacji %></td>
+                        <td><%= l.tabela %></td>
+                        <td><%= l.rekordID %></td>
+                        <td><%= l.operacja %></td>
+                        <td><%= l.uzytkownikLogin || '-' %></td>
+                        <td><%= l.szczegoly || '-' %></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+            <% } else { %>
+            <div class="no-data">Brak logów w bazie danych</div>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><%= footer_text %></p>
+    </div>
+
+    <script src="/jquery-3.7.1.min.js"></script>
+    <script src="/datatables/dataTables.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new DataTable('#logsTable', {
+                "language": { "url": "/datatables/pl.json" },
+                "pageLength": 25,
+                "lengthMenu": [ [10,25,50,-1],[10,25,50,"Wszystkie"] ],
+                "order": [[0, "desc"]]
+            });
+        });
+    </script>
+</body>
+</html>

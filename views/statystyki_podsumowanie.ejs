@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> - Podsumowanie
+    </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: black;
+            min-height: 100vh;
+            padding: 20px;
+            color: white
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .header h1 {
+            color: #333
+        }
+
+        .header p {
+            color: #666
+        }
+
+        .back-btn {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block
+        }
+
+        .back-btn:hover {
+            background: #5568d3
+        }
+
+        .projector-mode {
+            background: #000000;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+            border: none
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1rem
+        }
+
+        .column {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            color: #333
+        }
+
+        .suma-total {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4)
+        }
+
+        .suma-total h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem
+        }
+
+        .suma-total .amount {
+            font-size: 4rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2)
+        }
+
+        .currency-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem
+        }
+
+        .currency-table th,
+        .currency-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd
+        }
+
+        .currency-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333
+        }
+
+        .currency-table tr:hover {
+            background: #f8f9fa
+        }
+
+        .currency-table .amount-col {
+            text-align: right;
+            font-weight: 600;
+            color: #667eea
+        }
+
+        .currency-tables {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .currency-tables .currency-table {
+            margin-top: 0;
+        }
+
+        .ranking {
+            margin-bottom: 2rem
+        }
+
+        .ranking h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #667eea
+        }
+
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: transform 0.2s ease
+        }
+
+        .ranking-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+        }
+
+        .ranking-item .position {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 40px
+        }
+
+        .ranking-item .name {
+            flex: 1;
+            margin-left: 1rem;
+            font-weight: 600
+        }
+
+        .ranking-item .value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2d9cdb
+        }
+
+        .ranking-item:nth-child(1) .position {
+            color: #FFD700
+        }
+
+        .ranking-item:nth-child(2) .position {
+            color: #C0C0C0
+        }
+
+        .ranking-item:nth-child(3) .position {
+            color: #CD7F32
+        }
+
+        /* Projector mode */
+        body.projector-mode {
+            margin: 0;
+            padding: 0;
+        }
+
+        body.projector-mode .header {
+            display: none
+        }
+
+        body.projector-mode .content {
+            height: 100vh;
+            width: 100vw;
+            padding: 2rem
+        }
+
+        body.projector-mode .suma-total .amount {
+            font-size: 6rem
+        }
+
+        body.projector-mode .currency-tables {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        body.projector-mode .currency-table {
+            margin-top: 0;
+        }
+
+        /* Exit button for projector mode */
+        .exit-projector {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .exit-projector:hover {
+            background: rgba(255, 0, 0, 1);
+        }
+
+        body.projector-mode .exit-projector {
+            display: block;
+        }
+
+        @media (max-width: 1200px) {
+            .content {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black
+            }
+
+            .header {
+                display: none
+            }
+
+            .back-btn,
+            .projector-mode {
+                display: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="exit-projector" onclick="toggleProjectorMode()" title="Wyjdź z trybu rzutnika">×</button>
+    <div class="header">
+        <div>
+            <h1>
+                <%= title %>
+            </h1>
+            <p>Podsumowanie zbiórki</p>
+        </div>
+        <div>
+            <p style="color: #333;"><strong>Zalogowany:</strong>
+                <%= user.imie %>
+                    <%= user.nazwisko %>
+            </p>
+            <a href="/statystyki" class="back-btn">← Wróć</a>
+            <button class="projector-mode" onclick="toggleProjectorMode()">🖥️ Tryb rzutnika</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Kolumna 1: Suma + tabelka monet/banknotów -->
+        <div class="column">
+            <div class="suma-total">
+                <h2>SUMA CAŁKOWITA</h2>
+                <div class="amount"><%= (summary.sumaCalkowita || 0).toFixed(2) %> zł</div>
+            </div>
+
+            <h3>Szczegóły zbiórki</h3>
+            <div class="currency-tables">
+                <table class="currency-table">
+                    <thead>
+                        <tr>
+                            <th>Monety</th>
+                            <th>Ilość</th>
+                            <th class="amount-col">Wartość</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% const coins=[{ name: '1gr' , field: 'm1gr' , value: 0.01 }, { name: '2gr' , field: 'm2gr' , value: 0.02 }, { name: '5gr' , field: 'm5gr' , value: 0.05 }, { name: '10gr' , field: 'm10gr' , value: 0.10 }, { name: '20gr' , field: 'm20gr' , value: 0.20 }, { name: '50gr' , field: 'm50gr' , value: 0.50 }, { name: '1 zł' , field: 'm1zl' , value: 1 }, { name: '2 zł' , field: 'm2zl' , value: 2 }, { name: '5 zł' , field: 'm5zl' , value: 5 } ]; %>
+                        <% coins.forEach(coin=> { %>
+                            <tr>
+                                <td>
+                                    <%= coin.name %>
+                                </td>
+                                <td>
+                                    <%= summary[coin.field] || 0 %>
+                                </td>
+                                <td class="amount-col">
+                                    <%= ((summary[coin.field] || 0) * coin.value).toFixed(2) %> zł
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+
+                <table class="currency-table">
+                    <thead>
+                        <tr>
+                            <th>Banknoty</th>
+                            <th>Ilość</th>
+                            <th class="amount-col">Wartość</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% const bills=[{ name: '10 zł' , field: 'b10zl' , value: 10 }, { name: '20 zł' , field: 'b20zl' , value: 20 }, { name: '50 zł' , field: 'b50zl' , value: 50 }, { name: '100 zł' , field: 'b100zl' , value: 100 }, { name: '200 zł' , field: 'b200zl' , value: 200 }, { name: '500 zł' , field: 'b500zl' , value: 500 } ]; %>
+                        <% bills.forEach(bill=> { %>
+                            <tr>
+                                <td>
+                                    <%= bill.name %>
+                                </td>
+                                <td>
+                                    <%= summary[bill.field] || 0 %>
+                                </td>
+                                <td class="amount-col">
+                                    <%= ((summary[bill.field] || 0) * bill.value).toFixed(2) %> zł
+                                </td>
+                            </tr>
+                            <% }); %>
+                                <tr style="background: #f0f0f0; font-weight: bold;">
+                                    <td colspan="2">Terminal</td>
+                                    <td class="amount-col">
+                                        <%= (summary.terminal || 0).toFixed(2) %> zł
+                                    </td>
+                                </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Kolumna 2: TOP 5 wolontariuszy i liczących -->
+        <div class="column">
+            <div class="ranking">
+                <h3>🏆 TOP 5 Wolontariuszy</h3>
+                <% if (topWolontariusze && topWolontariusze.length> 0) { %>
+                    <% topWolontariusze.forEach((w, index)=> { %>
+                        <div class="ranking-item">
+                            <div class="position">
+                                <%= index + 1 %>.
+                            </div>
+                            <div class="name">
+                                <%= w.imie %>
+                                    <%= w.nazwisko %> (<%= w.numerID %>)
+                            </div>
+                            <div class="value">
+                                <%= (w.suma || 0).toFixed(2) %> zł
+                            </div>
+                        </div>
+                        <% }); %>
+                            <% } else { %>
+                                <p style="color: #999; text-align: center; padding: 2rem;">Brak danych</p>
+                                <% } %>
+            </div>
+
+            <div class="ranking">
+                <h3>🧮 TOP 5 Osób liczących</h3>
+                <% if (topLiczacy && topLiczacy.length> 0) { %>
+                    <% topLiczacy.forEach((l, index)=> { %>
+                        <div class="ranking-item">
+                            <div class="position">
+                                <%= index + 1 %>.
+                            </div>
+                            <div class="name">
+                                <%= l.imie %>
+                                    <%= l.nazwisko %>
+                                        <small style="color: #999;">(rozliczeń: <%= l.liczbaRozliczen %>)</small>
+                            </div>
+                            <div class="value">
+                                <%= (l.suma || 0).toFixed(2) %> zł
+                            </div>
+                        </div>
+                        <% }); %>
+                            <% } else { %>
+                                <p style="color: #999; text-align: center; padding: 2rem;">Brak danych</p>
+                                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleProjectorMode() {
+            document.body.classList.toggle('projector-mode');
+            // Zapisz stan w localStorage
+            const isProjectorMode = document.body.classList.contains('projector-mode');
+            localStorage.setItem('projectorMode', isProjectorMode);
+        }
+
+        // Sprawdź stan przy ładowaniu strony
+        document.addEventListener('DOMContentLoaded', function() {
+            const isProjectorMode = localStorage.getItem('projectorMode') === 'true';
+            if (isProjectorMode) {
+                document.body.classList.add('projector-mode');
+            }
+        });
+
+        // Auto-refresh co 10 sekund
+        setTimeout(() => {
+            location.reload();
+        }, 10000);
+    </script>
+</body>
+
+</html>

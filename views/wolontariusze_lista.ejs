@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/datatables/dataTables.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: black;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-info p {
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+        
+        .back-btn {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            background: #5568d3;
+        }
+        
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+            margin-bottom: 2rem;
+        }
+        
+        .content h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        table tr.zaznaczony {
+            background: #fff9e6 !important;
+        }
+        
+        .clickable-cell {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .clickable-cell:hover {
+            background: #e8e8e8;
+        }
+        
+        .edit-btn {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+        }
+        
+        .edit-btn:hover {
+            background: #5568d3;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            text-align: center;
+        }
+        
+        .badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .badge-yes {
+            background: #2ed573;
+            color: white;
+            font-family: monospace;
+        }
+        
+        .badge-no {
+            background: #ff4757;
+            color: white;
+            font-family: monospace;
+        }
+        
+        .pesel-hidden {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            font-family: monospace;
+            font-size: larger;
+        }
+        
+        .pesel-hidden .pesel-value {
+            display: none;
+        }
+        
+        .pesel-hidden .pesel-dots {
+            display: inline;
+            color: #999;
+        }
+        
+        .pesel-hidden:hover .pesel-value {
+            display: inline;
+        }
+        
+        .pesel-hidden:hover .pesel-dots {
+            display: none;
+        }
+        
+        .pesel-hidden.show-pesel .pesel-value {
+            display: inline;
+        }
+        
+        .pesel-hidden.show-pesel .pesel-dots {
+            display: none;
+        }
+        
+        .pesel-hidden.minor {
+            text-decoration: underline;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-info {
+                text-align: center;
+                margin-top: 1rem;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            table th, table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center;">
+            <img src="/logo.png" alt="Logo WOŚP" style="height: 50px; margin-right: 10px;">
+            <h1 style="margin: 0;"><a href="/" style="text-decoration: none; color: inherit;"><%= title %></a></h1>
+            <p style="margin: 0 0 0 10px;">Lista wolontariuszy</p>
+        </div>
+        <div class="user-info">
+            <p><strong>Zalogowany:</strong> <%= user.imie %> <%= user.nazwisko %></p>
+            <a href="/wolontariusze" class="back-btn">← Powrót</a>
+        </div>
+    </div>
+    
+    <div class="content">
+        <h3>Wolontariusze (<%= wolontariusze.length %>)</h3>
+        
+        <div class="table-container">
+            <% if (wolontariusze.length > 0) { %>
+            <table id="volunteersTable">
+                <thead>
+                    <tr>
+                        <th>Numer ID</th>
+                        <th>Imię</th>
+                        <th>Nazwisko</th>
+                        <th>Discord</th>
+                        <th>Telefon</th>
+                        <th>PESEL</th>
+                        <th>Rodzic</th>
+                        <th>Terminal</th>
+                        <th>Puszka</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% wolontariusze.forEach(function(w) { %>
+                    <tr class="<%= w.zaznaczony == 1 ? 'zaznaczony' : '' %>">
+                        <td class="clickable-cell" onclick="toggleZaznaczony(this, <%= w.id %>, <%= w.zaznaczony == 1 ? 0 : 1 %>)" title="Kliknij aby zaznaczyć/odznaczyć"><strong><%= w.numerID %></strong></td>
+                        <td class="clickable-cell" onclick="toggleZaznaczony(this, <%= w.id %>, <%= w.zaznaczony == 1 ? 0 : 1 %>)" title="Kliknij aby zaznaczyć/odznaczyć"><%= w.imie %></td>
+                        <td class="clickable-cell" onclick="toggleZaznaczony(this, <%= w.id %>, <%= w.zaznaczony == 1 ? 0 : 1 %>)" title="Kliknij aby zaznaczyć/odznaczyć"><%= w.nazwisko %></td>
+                        <td><%= w.discord || '-' %></td>
+                        <td><a style="color: inherit; text-decoration: none;" href="tel:<%= w.telefon %>"><%= w.telefon || '-' %></a></td>
+                        <td>
+                            <% if (w.pesel && w.pesel !== '') { %>
+                                <% if (!czyPelnoletni(w.pesel, new Date())) { %>
+                                    <span style="text-decoration: underline;">
+                                        <span class="pesel-hidden" onclick="showPesel(this)" title="Kliknij aby pokazać">
+                                            <span class="pesel-dots">###########</span>
+                                            <span class="pesel-value"><%= peselAnonimizuj(w.pesel) %></span>
+                                        </span>
+                                    </span>
+                                <% } else { %>
+                                    <span class="pesel-hidden" onclick="showPesel(this)" title="Kliknij aby pokazać">
+                                        <span class="pesel-dots">###########</span>
+                                        <span class="pesel-value"><%= peselAnonimizuj(w.pesel) %></span>
+                                    </span>
+                                <% } %>
+                            <% } else { %>
+                                -
+                            <% } %>
+                        </td>
+                        <td><%= w.rodzic === 'BRAK' ? '-' : w.rodzic %></td>
+                        <td>
+                            <% if (w.terminal == 1) { %>
+                                <span class="badge badge-yes" onclick="toggleField(this, <%= w.id %>, 'terminal', 0)" title="Kliknij aby zmienić">TAK</span>
+                            <% } else { %>
+                                <span class="badge badge-no" onclick="toggleField(this, <%= w.id %>, 'terminal', 1)" title="Kliknij aby zmienić">NIE</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (w.puszkaWydana == 1) { %>
+                                <span class="badge badge-yes" onclick="toggleField(this, <%= w.id %>, 'puszkaWydana', 0)" title="Kliknij aby zmienić">TAK</span>
+                            <% } else { %>
+                                <span class="badge badge-no" onclick="toggleField(this, <%= w.id %>, 'puszkaWydana', 1)" title="Kliknij aby zmienić">NIE</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <a href="/wolontariusze/edytuj/<%= w.id %>" class="edit-btn">Edytuj</a>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+            <% } else { %>
+            <div class="no-data">
+                Brak wolontariuszy w bazie danych
+            </div>
+            <% } %>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p><%= footer_text %></p>
+    </div>
+    
+    <script>
+        /*function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('volunteersTable');
+            const tr = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < td.length - 1; j++) {
+                    if (td[j]) {
+                        const txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                tr[i].style.display = found ? '' : 'none';
+            }
+        }
+        */
+        function toggleField(volunteerId, field, newValue) {
+            fetch(`/wolontariusze/toggle/${volunteerId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    field: field,
+                    value: newValue
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Odśwież stronę aby pokazać nową wartość
+                    location.reload();
+                } else {
+                    alert('Błąd: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Wystąpił błąd podczas aktualizacji');
+                console.error('Error:', error);
+            });
+        }
+        
+        let peselTimeout = null;
+        function showPesel(element) {
+            // Ukryj wszystkie inne wyświetlone PESELe
+            document.querySelectorAll('.pesel-hidden.show-pesel').forEach(el => {
+                if (el !== element) {
+                    el.classList.remove('show-pesel');
+                }
+            });
+            
+            // Dla urządzeń mobilnych - pokaż PESEL przez 4 sekundy
+            element.classList.add('show-pesel');
+            
+            // Wyczyść poprzedni timeout jeśli istnieje
+            if (peselTimeout) {
+                clearTimeout(peselTimeout);
+            }
+            
+            // Ukryj PESEL po 4 sekundach
+            peselTimeout = setTimeout(() => {
+                element.classList.remove('show-pesel');
+            }, 4000);
+        }
+    </script>
+    <script src="/jquery-3.7.1.min.js"></script>
+    <script src="/datatables/dataTables.min.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let table = new DataTable('#volunteersTable', 
+            {
+                "language": {
+                    "url": "/datatables/pl.json"
+                },
+                "pageLength": 25,
+                "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Wszystkie"] ],
+                "order": [[ 0, "asc" ]]
+            }
+        );
+    });
+
+    function toggleZaznaczony(element, volunteerId, newValue) {
+        fetch(`/wolontariusze/toggle/${volunteerId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ field: 'zaznaczony', value: newValue })
+        })
+        .then(r => {
+            if (!r.ok) {
+                throw new Error(`HTTP error! status: ${r.status}`);
+            }
+            return r.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Znajdź wiersz i zaktualizuj klasę zaznaczony
+                console.log(`Successfully toggled zaznaczony for volunteer ID ${volunteerId} to value ${newValue}`);
+                const row = element.closest('tr');
+                if (newValue === 1) {
+                    row.classList.add('zaznaczony');
+                } else {
+                    row.classList.remove('zaznaczony');
+                }
+                // Zaktualizuj onclick dla wszystkich klikanych komórek w tym wierszu
+                const clickableCells = row.querySelectorAll('.clickable-cell');
+                clickableCells.forEach(cell => {
+                    cell.setAttribute('onclick', `toggleZaznaczony(this, ${volunteerId}, ${newValue === 1 ? 0 : 1})`);
+                });
+            } else {
+                alert('Błąd: ' + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error details:', error);
+            alert('Błąd połączenia z serwerem: ' + error.message);
+        });
+    }
+
+    function toggleField(element, volunteerId, field, newValue) {
+        console.log(`Toggling field ${field} for volunteer ID ${volunteerId} to value ${newValue}`);
+        fetch(`/wolontariusze/toggle/${volunteerId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ field, value: newValue })
+        })
+        .then(r => {
+            if (!r.ok) {
+                throw new Error(`HTTP error! status: ${r.status}`);
+            }
+            return r.json();
+        })
+        .then(data => {
+            if (data.success) {
+                console.log(`Successfully toggled ${field} for volunteer ID ${volunteerId} to value ${newValue}`);
+                // Znajdź badge i zaktualizuj go
+                const badge = element;
+                if (newValue === 1) {
+                    badge.classList.remove('badge-no');
+                    badge.classList.add('badge-yes');
+                    badge.textContent = 'TAK';
+                    badge.setAttribute('onclick', `toggleField(this, ${volunteerId}, '${field}', 0)`);
+                } else {
+                    badge.classList.remove('badge-yes');
+                    badge.classList.add('badge-no');
+                    badge.textContent = 'NIE';
+                    badge.setAttribute('onclick', `toggleField(this, ${volunteerId}, '${field}', 1)`);
+                } 
+            } else {
+                alert('Błąd: ' + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error details:', error);
+            alert('Błąd połączenia z serwerem: ' + error.message);
+        });
+    }
+</script>
+
+</body>
+</html>

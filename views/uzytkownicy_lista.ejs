@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/datatables/dataTables.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: black;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-info p {
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+        
+        .back-btn {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            background: #5568d3;
+        }
+        
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+            margin-bottom: 2rem;
+        }
+        
+        .content h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .edit-btn {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        
+        .edit-btn:hover {
+            background: #5568d3;
+        }
+
+        .qr-btn {
+            background: #00b894;
+            color: white;
+            padding: 0.5rem 0.8rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            transition: background 0.2s ease;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .qr-btn:hover {
+            background: #01926b;
+        }
+        
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .delete-btn:hover {
+            background: #ee5a6f;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .badge-superadmin {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .badge-full {
+            background: #2ed573;
+            color: white;
+        }
+        
+        .badge-counter {
+            background: #ffa502;
+            color: white;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Modal dla edycji */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .submit-btn {
+            background: #667eea;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .submit-btn:hover {
+            background: #5568d3;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-info {
+                text-align: center;
+                margin-top: 1rem;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            table th, table td {
+                padding: 0.5rem;
+            }
+        }
+        #qrcode img {
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center;">
+            <img src="/logo.png" alt="Logo WOŚP" style="height: 50px; margin-right: 10px;">
+            <h1 style="margin: 0;"><a href="/" style="text-decoration: none; color: inherit;"><%= title %></a></h1>
+            <p style="margin: 0 0 0 10px;">Lista użytkowników</p>
+        </div>
+        <div class="user-info">
+            <p><strong>Zalogowany:</strong> <%= user.imie %> <%= user.nazwisko %></p>
+            <a href="/uzytkownicy" class="back-btn">← Powrót</a>
+        </div>
+    </div>
+    
+    <div class="content">
+        <h3>Użytkownicy (<%= uzytkownicy.length %>)</h3>
+        
+        <div class="table-container">
+            <% if (uzytkownicy.length > 0) { %>
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Login</th>
+                        <th>Imię</th>
+                        <th>Nazwisko</th>
+                        <th>Poziom dostępu</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% uzytkownicy.forEach(function(u) { %>
+                    <tr>
+                        <td><strong><%= u.id %></strong></td>
+                        <td><%= u.login %></td>
+                        <td><%= u.imie || '-' %></td>
+                        <td><%= u.nazwisko || '-' %></td>
+                        <td>
+                            <% if (u.dostep === 0) { %>
+                                <span class="badge badge-superadmin">Superadmin</span>
+                            <% } else if (u.dostep === 1) { %>
+                                <span class="badge badge-full">Dostęp pełny</span>
+                            <% } else if (u.dostep === 2) { %>
+                                <span class="badge badge-counter">Osoba licząca</span>
+                            <% } else { %>
+                                <span class="badge">Nieznany</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (user.dostep === 0 || (user.dostep === 1 && u.dostep !== 0)) { %>
+                                <button class="edit-btn" onclick="openEditModal(<%= u.id %>, '<%= u.login %>', '<%= u.imie || '' %>', '<%= u.nazwisko || '' %>', <%= u.dostep %>)">Edytuj</button>
+                            <% } %>
+                            <button class="qr-btn" onclick="openQrModal('<%= u.login %>')">QR</button>
+                            <% if (user.dostep === 0) { %>
+                                <button class="qr-btn" onclick="invalidateUserToken(<%= u.id %>, '<%= u.login %>')" style="background: #e74c3c;">
+                                    🔒
+                                </button>
+                            <% } %>
+                            <% if (u.id !== user.id && (user.dostep === 0 || (user.dostep === 1 && u.dostep !== 0))) { %>
+                                <button class="delete-btn" onclick="deleteUser(<%= u.id %>, '<%= u.login %>')">Usuń</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+            <% } else { %>
+            <div class="no-data">
+                Brak użytkowników w bazie danych
+            </div>
+            <% } %>
+        </div>
+    </div>
+    
+    <!-- Modal edycji użytkownika -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h3>Edytuj użytkownika</h3>
+            <form id="editForm" method="POST">
+                <input type="hidden" id="editUserId" name="userId">
+                
+                <div class="form-group">
+                    <label for="editLogin">Login</label>
+                    <input type="text" id="editLogin" name="login" disabled>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editImie">Imię</label>
+                    <input type="text" id="editImie" name="imie" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editNazwisko">Nazwisko</label>
+                    <input type="text" id="editNazwisko" name="nazwisko" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editDostep">Poziom dostępu</label>
+                    <select id="editDostep" name="dostep" required>
+                        <% if (user.dostep === 0) { %>
+                        <option value="0">Superadmin</option>
+                        <% } %>
+                        <option value="1">Dostęp pełny</option>
+                        <option value="2">Osoba licząca</option>
+                    </select>
+                    <input type="hidden" id="editDostepHidden" name="dostep" value="">
+                    <small id="editDostepNote" style="display:none;color:#666;">Nie możesz zmienić swojego poziomu dostępu.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editHaslo">Nowe hasło (pozostaw puste, jeśli nie zmieniasz)</label>
+                    <input type="password" id="editHaslo" name="haslo" autocomplete="new-password">
+                </div>
+                
+                <button type="submit" class="submit-btn">Zapisz zmiany</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal z kodem QR dla wybranego użytkownika -->
+    <div id="qrModal" class="modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5);">
+        <div class="modal-content" style="max-width:420px;margin:5% auto;padding:1.5rem;">
+            <span class="close" onclick="closeQrModal()">&times;</span>
+            <h3>Kod QR użytkownika</h3>
+            <div id="qrcode" style="margin:12px auto;"></div>
+            <pre id="qrData" style="text-align:left;background:#f6f6f6;padding:8px;border-radius:4px;overflow:auto;max-height:200px;"></pre>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><%= footer_text %></p>
+    </div>
+    
+    <script src="/jquery-3.7.1.min.js"></script>
+    <script src="/datatables/dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        const APP_URL = '<%= URL_FOR_APP %>';
+        document.addEventListener('DOMContentLoaded', function () {
+            let table = new DataTable('#usersTable', 
+                {
+                    "language": {
+                        "url": "/datatables/pl.json"
+                    },
+                    "pageLength": 25,
+                    "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Wszystkie"] ],
+                    "order": [[ 0, "asc" ]]
+                }
+            );
+        });
+        
+        function openQrModal(login) {
+            const data = { url: APP_URL, user: login };
+            document.getElementById('qrcode').innerHTML = '';
+            new QRCode(document.getElementById('qrcode'), {
+                text: JSON.stringify(data),
+                width: 220,
+                height: 220,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            document.getElementById('qrData').textContent = JSON.stringify(data, null, 2);
+            document.getElementById('qrModal').style.display = 'block';
+        }
+        function closeQrModal() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+        
+        function openEditModal(userId, login, imie, nazwisko, dostep) {
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editLogin').value = login;
+            document.getElementById('editImie').value = imie;
+            document.getElementById('editNazwisko').value = nazwisko;
+            document.getElementById('editHaslo').value = '';
+            
+            // Ustaw action formularza
+            document.getElementById('editForm').action = '/uzytkownicy/edytuj/' + userId;
+
+            // Current logged-in user id
+            const currentUserId = '<%= user.id %>';
+            const select = document.getElementById('editDostep');
+            const hidden = document.getElementById('editDostepHidden');
+            const note = document.getElementById('editDostepNote');
+
+            // Set value and default visibility
+            select.value = dostep;
+            hidden.value = dostep;
+            note.style.display = 'none';
+            select.disabled = false;
+
+            // If editing self, prevent changing access level: lock select and keep hidden value
+            if (String(userId) === String(currentUserId)) {
+                select.disabled = true;
+                hidden.value = select.value;
+                note.style.display = 'block';
+            }
+
+            document.getElementById('editModal').style.display = 'block';
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        function deleteUser(userId, login) {
+            if (!confirm(`Czy na pewno chcesz usunąć użytkownika "${login}"?`)) {
+                return;
+            }
+            
+            fetch(`/uzytkownicy/usun/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Użytkownik został usunięty');
+                    location.reload();
+                } else {
+                    alert('Błąd: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Wystąpił błąd podczas usuwania użytkownika');
+                console.error('Error:', error);
+            });
+        }
+        
+        function invalidateUserToken(userId, login) {
+            if (!confirm(`Czy na pewno chcesz unieważnić tokeny użytkownika "${login}"?`)) {
+                return;
+            }
+            
+            fetch(`/tokens/invalidate/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Unieważniono ' + data.count + ' tokenów użytkownika');
+                } else {
+                    alert('Błąd: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Wystąpił błąd podczas unieważniania tokenów');
+                console.error('Error:', error);
+            });
+        }
+        
+        // Zamknij modal po kliknięciu poza nim
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                closeEditModal();
+            }
+        }
+    </script>
+</body>
+</html>

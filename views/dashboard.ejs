@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: black;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-info h2 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-info p {
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+        
+        .access-level {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .access-level.superadmin {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .access-level.full {
+            background: #2ed573;
+            color: white;
+        }
+        
+        .access-level.counter {
+            background: #ffa502;
+            color: white;
+        }
+        
+        .dashboard-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-content h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .menu-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+        
+        .menu-item {
+            background: black;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            flex: 1 1 calc(25% - 1rem);
+            min-width: 200px;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 3px 3px 10px rgb(0, 0, 0);
+        }
+        
+        .menu-item h4 {
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .menu-item p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .logout-btn {
+            background: #ff4757;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+            display: inline-block;
+        }
+        
+        .logout-btn:hover {
+            background: #ff3c3c;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-info {
+                text-align: center;
+                margin-top: 1rem;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        #myQrcode img {
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center;">
+            <img src="/logo.png" alt="Logo WOŚP" style="height: 50px; margin-right: 10px;">
+            <h1 style="margin: 0;"><a href="/" style="text-decoration: none; color: inherit;"><%= title %></a></h1>
+            <p style="margin: 0 0 0 10px;">Panel główny</p>
+        </div>
+        <div class="user-info">
+            <h2>Witaj, <%= user.imie %> <%= user.nazwisko %>!</h2>
+            <p><strong>Login:</strong> <%= user.login %></p>
+            <p><strong>Poziom dostępu:</strong> 
+                <span class="access-level <%= user.dostep === 0 ? 'superadmin' : user.dostep === 1 ? 'full' : 'counter' %>">
+                    <%= dostepText %>
+                </span>
+            </p>
+            <a href="/logout" class="logout-btn">Wyloguj się</a>
+        </div>
+    </div>
+    
+    <div class="dashboard-content">
+        <h3>Menu główne</h3>
+        
+        <div class="menu-grid">
+            <% if (user.dostep <= 1) { %>
+            <a href="/wolontariusze" class="menu-item">
+                <h4>📋 Wolontariusze</h4>
+                <p>Zarządzanie wolontariuszami</p>
+            </a>
+            <% } %>
+            
+            <% if (user.dostep <= 2) { %>
+            <a href="/rozliczenia" class="menu-item">
+                <h4>💰 Rozliczenia</h4>
+                <p>Rozliczanie zbiórek</p>
+            </a>
+            <% } %>
+            
+            <% if (user.dostep <= 2) { %>
+            <a href="/statystyki" class="menu-item">
+                <h4>📊 Statystyki</h4>
+                <p>Statystyki</p>
+            </a>
+            <% } %>
+            <% if (user.dostep == 2) { %>
+            <a href="#" class="menu-item" onclick="openMyQrModal()">
+                <h4>🔑 Mój QR</h4>
+                <p>Pokaż kod QR z danymi dostępu</p>
+            </a>
+            <% } %>
+            
+            <% if (user.dostep <= 1) { %>
+            <a href="/uzytkownicy" class="menu-item">
+                <h4>👥 Użytkownicy</h4>
+                <p>Zarządzanie użytkownikami</p>
+            </a>
+            <% } %>
+            
+            <% if (user.dostep === 0) { %>
+            <a href="/ustawienia" class="menu-item">
+                <h4>⚙️ Ustawienia</h4>
+                <p>Konfiguracja systemu</p>
+            </a>
+            
+            <a href="/druki" class="menu-item">
+                <h4>🖨️ Przydatne dokumenty</h4>
+                <p>Przydatne rzeczy do druku</p>
+            </a>
+            
+            <a href="/logs" class="menu-item">
+                <h4>🔍 Dziennik zdarzeń</h4>
+                <p>Historia operacji</p>
+            </a>
+            
+            <a href="#" class="menu-item" onclick="invalidateAllTokens()" style="background: #e74c3c;">
+                <h4>🔒 Unieważnij wszystkie tokeny</h4>
+                <p>Usuń dostęp API dla wszystkich</p>
+            </a>
+            <% } %>
+        </div>
+    </div>
+            <% if (user.dostep == 2) { %>
+
+        <!-- Modal z kodem QR dla zalogowanego użytkownika -->
+        <div id="myQrModal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5);">
+            <div style="background:white;margin:5% auto;padding:1rem;border-radius:8px;width:90%;max-width:420px;text-align:center;position:relative;">
+                <span style="position:absolute;right:12px;top:8px;cursor:pointer;font-size:20px;" onclick="closeMyQrModal()">✖</span>
+                <h3>Mój kod QR</h3>
+                <div id="myQrcode" style="margin:12px auto;"></div>
+                <pre id="myQrData" style="text-align:left;background:#f6f6f6;padding:8px;border-radius:4px;overflow:auto;max-height:160px;"></pre>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+        <script>
+            const APP_URL = '<%= URL_FOR_APP %>';
+            function openMyQrModal(){
+                const data = { url: APP_URL, user: '<%= user.login %>' };
+                document.getElementById('myQrcode').innerHTML = '';
+                new QRCode(document.getElementById('myQrcode'), {
+                    text: JSON.stringify(data),
+                    width: 220,
+                    height: 220,
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                document.getElementById('myQrData').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('myQrModal').style.display = 'block';
+            }
+            function closeMyQrModal(){
+                document.getElementById('myQrModal').style.display = 'none';
+            }
+        </script>
+        <% } %>
+    
+    <% if (user.dostep === 0) { %>
+    <script>
+        function invalidateAllTokens() {
+            if (!confirm('Czy na pewno chcesz unieważnić wszystkie tokeny API? To spowoduje wylogowanie wszystkich użytkowników z aplikacji mobilnych.')) {
+                return;
+            }
+            
+            fetch('/tokens/invalidate-all', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Unieważniono ' + data.count + ' tokenów');
+                } else {
+                    alert('Błąd: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Wystąpił błąd podczas unieważniania tokenów');
+                console.error('Error:', error);
+            });
+        }
+    </script>
+    <% } %>
+    
+    <div class="footer">
+        <p><%= footer_text %></p>
+    </div>
+</body>
+</html>

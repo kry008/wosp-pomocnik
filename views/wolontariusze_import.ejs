@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: black;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-info p {
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+        
+        .back-btn {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            background: #5568d3;
+        }
+        
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+            margin-bottom: 2rem;
+        }
+        
+        .content h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-box h4 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .info-box p {
+            color: #666;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        
+        .info-box code {
+            background: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+        
+        .file-upload-area input[type="file"] {
+            display: none;
+        }
+        
+        .file-label {
+            cursor: pointer;
+            display: inline-block;
+        }
+        
+        .file-label .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .file-label p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .file-info {
+            margin-top: 1rem;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+        
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #2ed573;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #ff4757;
+        }
+        
+        .progress-container {
+            display: none;
+            margin-top: 1rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #667eea;
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-info {
+                text-align: center;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center;">
+            <img src="/logo.png" alt="Logo WOŚP" style="height: 50px; margin-right: 10px;">
+            <h1 style="margin: 0;"><a href="/" style="text-decoration: none; color: inherit;"><%= title %></a></h1>
+            <p style="margin: 0 0 0 10px;">Import wolontariuszy z pliku CSV</p>
+        </div>
+        <div class="user-info">
+            <p><strong>Zalogowany:</strong> <%= user.imie %> <%= user.nazwisko %></p>
+            <a href="/wolontariusze" class="back-btn">← Powrót</a>
+        </div>
+    </div>
+    
+    <div class="content">
+        <h3>Importuj wolontariuszy</h3>
+        
+        <div class="info-box">
+            <h4>📋 Instrukcja importu</h4>
+            <p><strong>Format pliku:</strong> CSV (rozdzielony średnikami)</p>
+            <p><strong>Wymagane nagłówki:</strong></p>
+            <p style="margin-top: 1rem;"><strong>Opis pól:</strong></p>
+            <ul style="margin-left: 1.5rem; margin-top: 0.5rem; line-height: 1.8;">
+                <li><code>pesel</code> - numer PESEL wolontariusza</li>
+                <li><code>id_number</code> - unikalny numer ID wolontariusza</li>
+                <li><code>group_name</code> - nazwa grupy (opcjonalne)</li>
+                <li><code>token</code> - token (opcjonalne)</li>
+                <li><code>full_name</code> - pełne imię i nazwisko</li>
+                <li><code>phone</code> - numer telefonu</li>
+                <li><code>email</code> - adres email</li>
+                <li><code>data_status</code> - status danych (opcjonalne)</li>
+                <li><code>photo_status</code> - status zdjęcia (opcjonalne)</li>
+                <li><code>guardian</code> - dane opiekuna (dla niepełnoletnich)</li>
+                <li><code>address</code> - adres (opcjonalne)</li>
+            </ul>
+        </div>
+        
+        <form id="uploadForm" method="POST" action="/wolontariusze/import" enctype="multipart/form-data">
+            <div class="file-upload-area" id="uploadArea">
+                <label for="csvfile" class="file-label">
+                    <div class="upload-icon">📁</div>
+                    <p>Kliknij aby wybrać plik CSV lub przeciągnij go tutaj</p>
+                </label>
+                <input type="file" id="csvfile" name="csvfile" accept=".csv" required onchange="handleFileSelect(event)">
+                <div id="fileInfo" class="file-info"></div>
+            </div>
+            
+            <div class="progress-container" id="progressContainer">
+                <p style="margin-bottom: 0.5rem; color: #666;">Importowanie...</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>📥 Importuj wolontariuszy</button>
+        </form>
+    </div>
+    
+    <div class="footer">
+        <p><%= footer_text %></p>
+    </div>
+    
+    <script>
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const fileInfo = document.getElementById('fileInfo');
+                fileInfo.textContent = `✓ Wybrany plik: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+        
+        // Obsługa drag & drop
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#667eea';
+            uploadArea.style.background = '#f8f9fa';
+        });
+        
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ddd';
+            uploadArea.style.background = 'white';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ddd';
+            uploadArea.style.background = 'white';
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.csv')) {
+                document.getElementById('csvfile').files = e.dataTransfer.files;
+                handleFileSelect({ target: { files: e.dataTransfer.files } });
+            }
+        });
+        
+        // Obsługa wysyłania formularza
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const progressContainer = document.getElementById('progressContainer');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            progressContainer.style.display = 'block';
+            submitBtn.disabled = true;
+            
+            fetch('/wolontariusze/import', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Import zakończony!\n\nZaimportowano: ${data.imported}\nPominięto: ${data.skipped}\nBłędy: ${data.errors}`);
+                    if (data.imported > 0) {
+                        window.location.href = '/wolontariusze/lista';
+                    }
+                } else {
+                    alert('Błąd podczas importu: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Wystąpił błąd: ' + error.message);
+            })
+            .finally(() => {
+                progressContainer.style.display = 'none';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

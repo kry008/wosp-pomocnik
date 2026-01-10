@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> - Lista obecności na spotkaniu (z PESEL)
+    </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background: white;
+            color: black;
+            padding: 20px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid black;
+            padding-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+        }
+
+        .print-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .print-btn:hover {
+            background: #5568d3;
+        }
+
+        .back-btn {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: #e9ecef;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px 4px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .signature-cell {
+            min-width: 120px;
+        }
+
+        .date-cell {
+            min-width: 100px;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* Tryb drukowania poziomego */
+        @media print {
+            body {
+                padding: 10mm;
+                font-size: 11px;
+            }
+
+            .print-btn, .back-btn, .hide {
+                display: none;
+            }
+
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+
+            table {
+                margin-bottom: 10px;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+            .header, .hide {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header hide">
+        <h1>Lista obecności na spotkaniu</h1>
+        <p>WOŚP - Wolontariusze z numerami ID i danymi PESEL</p>
+    </div>
+
+    <div class="hide" style="margin-bottom: 20px;">
+        <button class="print-btn" onclick="window.print()">🖨️ Drukuj</button>
+        <a href="/druki" class="back-btn">← Powrót do druków</a>
+    </div>
+
+    <table>
+        <thead style="display: table-header-group;">
+            <tr>
+                <th colspan="6">Lista obecności na spotkaniu</th>
+            </tr>
+            <tr>
+                <th style="width: 80px;">ID</th>
+                <th style="width: 120px;">Imię</th>
+                <th style="width: 120px;">Nazwisko</th>
+                <th style="width: 100px; text-align: center;">PESEL</th>
+                <th class="date-cell">Data</th>
+                <th class="signature-cell">Podpis</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (wolontariusze && wolontariusze.length > 0) { %>
+                <% wolontariusze.forEach((w, index) => { %>
+                    <tr class="table-row">
+                        <td><%= w.numerID %></td>
+                        <td><%= w.imie %></td>
+                        <td><%= w.nazwisko %></td>
+                        <td style="text-align: center;">
+                            <% if (!czyPelnoletni(w.pesel, new Date())) { %>
+                                <span style="text-decoration: underline;"><%= peselAnonimizuj(w.pesel) %></span>
+                            <% } else { %>
+                                <%= peselAnonimizuj(w.pesel) %>
+                            <% } %>
+                        </td>
+                        <td class="date-cell"></td>
+                        <td class="signature-cell"></td>
+                    </tr>
+                <% }); %>
+            <% } else { %>
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 20px;">Brak wolontariuszy do wyświetlenia</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 30px; font-size: 10px; text-align: center; color: #666;">
+        <p>WOŚP - Wielka Orkiestra Świątecznej Pomocy</p>
+        <p>Wydrukowano: <%= new Date().toLocaleDateString('pl-PL') %></p>
+    </div>
+</body>
+
+</html>
