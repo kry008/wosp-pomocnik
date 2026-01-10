@@ -1,0 +1,284 @@
+/* Wspólne style CSS */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: black;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.header {
+    background: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.header h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.user-info {
+    text-align: right;
+}
+
+.user-info p {
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.back-btn {
+    background: #667eea;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+.back-btn:hover {
+    background: #5568d3;
+}
+
+.content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+    margin-bottom: 2rem;
+}
+
+.content h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 0.5rem;
+}
+
+.menu-item {
+    background: black;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.menu-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 3px 3px 10px rgb(0, 0, 0);
+}
+
+/* Dla dashboard */
+.menu-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: center;
+}
+
+.menu-item {
+    padding: 1.5rem;
+    flex: 1 1 calc(25% - 1rem);
+    min-width: 200px;
+}
+
+.menu-item h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.menu-item p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.logout-btn {
+    background: #ff4757;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+    display: inline-block;
+}
+
+.logout-btn:hover {
+    background: #ff3c3c;
+}
+
+.footer {
+    text-align: center;
+    color: white;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+.access-level {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.access-level.superadmin {
+    background: #ff4757;
+    color: white;
+}
+
+.access-level.full {
+    background: #2ed573;
+    color: white;
+}
+
+.access-level.counter {
+    background: #ffa502;
+    color: white;
+}
+
+.dashboard-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+    margin-bottom: 2rem;
+}
+
+.dashboard-content h3 {
+    color: #333;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 0.5rem;
+}
+
+/* Dla innych stron */
+.menu-grid.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.menu-item.large {
+    padding: 2rem;
+}
+
+/* Dla tabel */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+table th {
+    background: #667eea;
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Dla formularzy */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-login {
+    width: 100%;
+}
+
+.error-message {
+    background: #fee;
+    color: #c33;
+    padding: 0.75rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    border: 1px solid #fcc;
+    text-align: center;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .user-info {
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .menu-grid {
+        flex-direction: column;
+    }
+
+    .menu-item {
+        flex: 1 1 100%;
+    }
+}
