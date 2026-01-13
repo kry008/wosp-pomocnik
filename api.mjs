@@ -1,7 +1,22 @@
 import express from 'express'
 import crypto from 'crypto'
 
-export default function createApiRouter({ db, zapiszLog, settings }) {
+export default function createApiRouter({ db, zapiszLog }) {
+let settings = {}
+function loadSettings() {
+    db.all(`SELECT klucz, wartosc FROM ustawienia`, [], (err, rows) => {
+    if (err) {
+        console.error('Błąd ładowania ustawień:', err.message)
+    } else {
+        settings = {}
+        rows.forEach(row => {
+        settings[row.klucz] = row.wartosc
+        })
+        console.log('Ustawienia załadowane:', settings)
+    }
+    })
+}
+loadSettings()
 const router = express.Router()
 
 function hashPassword(pass) {
