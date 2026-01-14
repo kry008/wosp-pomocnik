@@ -130,16 +130,9 @@ router.get('/rozliczenia/wolontariusz/:id', verifyApiToken, (req, res) => {
         return res.status(500).json({ success: false, message: 'Błąd serwera' })
     }
     if (!wol) return res.status(404).json({ success: false, message: 'Wolontariusz nie znaleziony' })
-
-    db.get(`SELECT terminal FROM rozliczenie WHERE wolontariuszID = ? AND terminal = 1 AND aktywny = 1 LIMIT 1`, [id], (err, terminalRow) => {
-        if (err) {
-        console.error('Błąd sprawdzania terminala (API):', err.message)
-        return res.status(500).json({ success: false, message: 'Błąd serwera' })
-        }
-        const hadTerminal = !!terminalRow
-        if (typeof zapiszLog === 'function') zapiszLog('API_ACCESS', req.api_user.id, 'rozliczenia/wolontariusz', id)
-        res.json({ success: true, wolontariusz: wol, hadTerminal })
-    })
+    const hadTerminal = !!wol.terminal
+    if (typeof zapiszLog === 'function') zapiszLog('API_ACCESS', req.api_user.id, 'rozliczenia/wolontariusz', id)
+    res.json({ success: true, wolontariusz: wol, hadTerminal })
     })
 })
 
