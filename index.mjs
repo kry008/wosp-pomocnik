@@ -583,6 +583,90 @@ app.post('/wolontariusze/dodaj', requireAuth, (req, res) => {
 })
 
 
+app.get('/wolontariusze/dodaj-puszke-stacjonarna', requireAuth, (req, res) => {
+  //sprawdź dostęp
+  if (req.session.dostep > 1) {
+    return res.status(403).send('Brak dostępu')
+  }
+  res.render('wolontariusze_dodaj_puszke', {
+    error: null,
+    user: {
+      id: req.session.user_id,
+      login: req.session.login,
+      dostep: req.session.dostep,
+      imie: req.session.imie,
+      nazwisko: req.session.nazwisko
+    },
+    title: process.env.TITLE || 'Pomocnik szefa sztabu WOŚP',
+    footer_text: process.env.FOOTER_TEXT || '© 2026 WOŚP, przez kry008'
+  })
+})
+
+app.post('/wolontariusze/dodaj-puszke-stacjonarna', requireAuth, (req, res) => {
+  //sprawdź dostęp
+  if (req.session.dostep > 1) {
+    return res.status(403).send('Brak dostępu')
+  }
+  const { numerID, nazwisko, telefon, rodzic, puszkaWydana } = req.body
+  
+  if (!numerID || !nazwisko || !rodzic) {
+    return res.render('wolontariusze_dodaj_puszke', {
+      error: 'Numer ID, nazwa puszki i opiekun są wymagane',
+      user: {
+        id: req.session.user_id,
+        login: req.session.login,
+        dostep: req.session.dostep,
+        imie: req.session.imie,
+        nazwisko: req.session.nazwisko
+      },
+      title: process.env.TITLE || 'Pomocnik szefa sztabu WOŚP',
+      footer_text: process.env.FOOTER_TEXT || '© 2026 WOŚP, przez kry008'
+    })
+  }
+  
+  //sprawdź czy numerID już istnieje
+  db.get(`SELECT id FROM wolontariusz WHERE numerID = ?`, [numerID], (err, row) => {
+    if (err) {
+      console.error('Błąd sprawdzania puszki:', err.message)
+      return res.status(500).send('Błąd serwera')
+    }
+    if (row) {
+      return res.render('wolontariusze_dodaj_puszke', {
+        error: 'Puszka o podanym numerze ID już istnieje',
+        user: {
+          id: req.session.user_id,
+          login: req.session.login,
+          dostep: req.session.dostep,
+          imie: req.session.imie,
+          nazwisko: req.session.nazwisko
+        },
+        title: process.env.TITLE || 'Pomocnik szefa sztabu WOŚP',
+        footer_text: process.env.FOOTER_TEXT || '© 2026 WOŚP, przez kry008'
+      })
+    }
+    
+    // Dodaj puszkę stacjonarną do bazy
+    // Imię = spacja, PESEL = 00000000000, terminal = 0
+    const imie = ' '
+    const pesel = '00000000000'
+    const discord = ''
+    const terminalValue = 0
+    const puszkaWydanaValue = puszkaWydana ? 1 : 0
+    
+    db.run(`INSERT INTO wolontariusz (numerID, imie, nazwisko, discord, telefon, pesel, rodzic, terminal, puszkaWydana, ostatniaZmiana, aktywny) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+      [numerID, imie, nazwisko, discord, telefon || '', pesel, rodzic, terminalValue, puszkaWydanaValue, new Date().toISOString()],
+      function(err) {
+        if (err) {
+          console.error('Błąd dodawania puszki stacjonarnej:', err.message)
+          return res.status(500).send('Błąd serwera')
+        }
+        zapiszLog('DODANIE', req.session.user_id, 'wolontariusz', this.lastID)
+        res.redirect('/wolontariusze/lista')
+      }
+    )
+  })
+})
+
 app.get('/wolontariusze/import', requireAuth, (req, res) => {
   //sprawdź dostęp
   if (req.session.dostep > 1) {

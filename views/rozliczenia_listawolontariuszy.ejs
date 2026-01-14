@@ -76,8 +76,8 @@
                     <% wolontariusze.forEach(function(w) { %>
                     <tr class="clickable-row" onclick="goToRozliczenie(<%= w.id %>)">
                         <td><strong><%= w.numerID %></strong></td>
-                        <td><%= w.imie %></td>
-                        <td><%= w.nazwisko %></td>
+                        <td><%- w.zaznaczony == 1 ? '<u>' + w.imie + '</u>' : w.imie %></td>
+                        <td><%- w.zaznaczony == 1 ? '<u>' + w.nazwisko + '</u>' : w.nazwisko %></td>
                         <td><a href="/rozliczenia/wolontariusz/<%= w.id %>" class="edit-btn" onclick="event.stopPropagation()">Dodaj</a></td>
                     </tr>
                     <% }); %>
