@@ -6,6 +6,7 @@ function peselAnonimizuj(peselStr) {
   var pesel = peselStr.split('');
   if(peselStr === "00000000000") {
     return ""
+  }
   //pierwsza cyfra
   switch (pesel[9]) {
     case '0':
