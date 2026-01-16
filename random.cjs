@@ -111,11 +111,17 @@ db.serialize(() => {
         INSERT INTO users (login, haslo, imie, nazwisko, dostep)
         VALUES 
         ('dostep', ?, 'Jan', 'Koordynator', 1),
-        ('liczaca1', ?, 'Anna', 'Licząca', 2),
-        ('liczaca2', ?, 'Piotr', 'Liczący', 2),
-        ('liczaca3', ?, 'Karolina', 'Licząca', 2)
+        ('test1', ?, 'Anna', 'Mazur', 2),
+        ('test2', ?, 'Piotr', 'Nowak', 2),
+        ('test3', ?, 'Karolina', 'Majewska', 2),
+        ('test4', ?, 'Łukasz', 'Kowalski', 2),
+        ('test5', ?, 'Monika', 'Wiśniewska', 2),
+        ('test6', ?, 'Tomasz', 'Wójcik', 2)
     `,
     [
+        h('test1234'),
+        h('test1234'),
+        h('test1234'),
         h('test1234'),
         h('test1234'),
         h('test1234'),
@@ -157,7 +163,17 @@ db.serialize(() => {
         ('WOL-022', 'Damian', 'Nowakowski', 'damian#1313', '602222333', '09312661545', 'BRAK', 1, 1),
         ('WOL-023', 'Sylwia', 'Lis', 'sylwia#1414', '602333444', '05241936743', 'BRAK', 0, 1),
         ('WOL-024', 'Rafał', 'Zając', 'rafal#1515', '602444555', '10260573635', 'BRAK', 1, 1),
-        ('WOL-025', 'Iwona', 'Wrona', 'iwona#1616', '602555666', '01233149933', 'BRAK', 0, 1)
+        ('WOL-025', 'Iwona', 'Wrona', 'iwona#1616', '602555666', '01233149933', 'BRAK', 0, 1),
+        ('WOL-026', 'Mariusz', 'Michalski', 'mariusz#1717', '602666777', '88071512345', 'BRAK', 1, 1),
+        ('WOL-027', 'Beata', 'Kubiak', 'beata#1818', '602777888', '92062456789', 'BRAK', 0, 1),
+        ('WOL-028', 'Tadeusz', 'Gajda', 'tadeusz#1919', '602888999', '75030998765', 'BRAK', 1, 1),
+        ('WOL-029', 'Renata', 'Sowa', 'renata#2020', '602999000', '88021534567', 'BRAK', 0, 1),
+        ('WOL-030', 'Wojciech', 'Baran', 'wojciech#2121', '603000111', '99073045678', 'BRAK', 1, 1),
+        ('WOL-031', 'Elżbieta', 'Cieślak', 'elzbieta#2222', '603111222', '04251234567', 'BRAK', 0, 1),
+        ('WOL-032', 'Sebastian', 'Krawczyk', 'sebastian#2323', '603222333', '09282987654', 'BRAK', 1, 1),
+        ('WOL-033', 'Alicja', 'Stępień', 'alicja#2424', '603333444', '05263012345', 'BRAK', 0, 1),
+        ('WOL-034', 'Cezary', 'Chmiel', 'cezary#2525', '603444555', '88051267890', 'BRAK', 1, 1),
+        ('WOL-035', 'Dorota', 'Sikorska', 'dorota#2626', '603555666', '93071823456', 'BRAK', 0, 1)
     `);
 
 });
