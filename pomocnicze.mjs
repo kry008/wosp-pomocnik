@@ -62,7 +62,8 @@ function czyPelnoletni(peselStr, dateObj) {
         fullYear = 1800 + yearPart;
         monthPart -= 80;
     } else {
-        throw new Error("Nieprawidłowy numer PESEL");
+        //throw new Error("Nieprawidłowy numer PESEL");
+        return false;
     }
     
     const birthDate = new Date(fullYear, monthPart - 1, dayPart);
