@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+readme.md
+.env
+.DS_Store
+baza.sqlite
+baza.sqlite.old
+baza.plik.sql
+uploads/*
+.vscode
