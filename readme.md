@@ -2,7 +2,7 @@
 Aplikacja stworzona w celu ułatwienia i uporządkowania pracy szefów sztabów podczas finału WOŚP.
 
 ## Podziękowania
-Dziękuję @Zaptyp za pomoc w testach i analizie błędów aplikacji.
+Dziękuję [@Zaptyp](https://github.com/Zaptyp) za pomoc w testach i analizie błędów aplikacji.
 
 ## Spis treści
 - [Instalacja](#instalacja)
