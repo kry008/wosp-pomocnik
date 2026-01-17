@@ -1,6 +1,9 @@
 # Pomocnik Szefa Sztabu
 Aplikacja stworzona w celu ułatwienia i uporządkowania pracy szefów sztabów podczas finału WOŚP.
 
+## Podziękowania
+Dziękuję @Zaptyp za pomoc w testach i analizie błędów aplikacji.
+
 ## Spis treści
 - [Instalacja](#instalacja)
   - [Docker (zalecane)](#docker-zalecane)
