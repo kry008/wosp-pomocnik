@@ -113,7 +113,7 @@ Aby uruchomić automatycznie po starcie systemu, skonfiguruj Docker Desktop do a
 
 #### Restart aplikacji (zachowując dane)
 
-Aby ponownie uruchomić aplikację, użyj polecenia `pm2 restart index.mjs` w terminalu lub PowerShellu uruchomionym w katalogu z aplikacją.
+Aby ponownie uruchomić aplikację, użyj polecenia `pm2 restart 0` w terminalu lub PowerShellu uruchomionym w katalogu z aplikacją.
 
 #### Uruchomienie po uruchomieniu systemu
 
