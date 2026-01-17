@@ -8,6 +8,7 @@ node_modules/
 *.sqlite
 baza.sqlite
 *old
+generate_volunteers.cjs
 
 # Uploaded files
 uploads/
